@@ -61,7 +61,7 @@
          src="http://www.dell-lee.com/imgs/vue3/near.png"
         >
         <div class="nearby__content">
-          <div class="nearby__content__title">沃尔玛</div>
+          <div class="nearby__content__title">沃尔玛111</div>
           <div class="nearby__content__tags">
             <span class="nearby__content__tag">月售1万+</span>
             <span class="nearby__content__tag">月售1万+</span>
