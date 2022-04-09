@@ -44,7 +44,7 @@ export default {
 }
 </script>
 
-<style lang="scss" ecoped>
+<style lang="scss" scoped>
 @import '../../style/virables.scss';
 .nearby {
   &__title {
