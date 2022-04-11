@@ -10,7 +10,11 @@ const routes = [
   }, {
     path: '/login',
     name: 'Login',
-    component: Login
+    component: Login,
+    beforeEach (to, from, next) {
+      const isLogin = localStorage.isLogin
+      isLogin ? next({ name: 'Home' }) : next()
+    }
   }
   // {
   //   path: '/about',
@@ -25,6 +29,11 @@ const routes = [
 const router = createRouter({
   history: createWebHashHistory(),
   routes
+})
+
+router.beforeEach((to, from, next) => {
+  const { isLogin } = localStorage;
+  (isLogin || to.name === 'Login') ? next() : next({ name: 'Login' })
 })
 
 export default router
