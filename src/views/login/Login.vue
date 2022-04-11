@@ -2,13 +2,17 @@
   <div class="wrapper">
       <img class="wrapper__img" src="http://www.dell-lee.com/imgs/vue3/user.png">
       <div class="wrapper__input">
-          <input class="wrapper__input__content" placeholder="请输入手机号" />
+          <input class="wrapper__input__content" placeholder="请输入手机号"/>
       </div>
       <div class="wrapper__input">
-          <input class="wrapper__input__content" placeholder="请输入密码" />
+          <input
+           class="wrapper__input__content"
+           placeholder="请输入密码"
+           type="password"
+          />
       </div>
       <div class="wrapper__login-button" @click="handleLogin">登录</div>
-      <div class="wrapper__login-link">立即注册</div>
+      <div class="wrapper__login-link" @click="handleRegisterClick">立即注册</div>
   </div>
 </template>
 
@@ -22,7 +26,10 @@ export default {
       localStorage.isLogin = true
       router.push({ name: 'Home' })
     }
-    return { handleLogin }
+    const handleRegisterClick = () => {
+      router.push({ name: 'Register' })
+    }
+    return { handleLogin, handleRegisterClick }
   }
 }
 </script>
@@ -63,7 +70,7 @@ export default {
     }
   }
   &__login-button {
-    margin: .32rem .16rem .16rem .4rem;
+    margin: .32rem .4rem .16rem .4rem;
     line-height: .48rem;
     background: #0091FF;
     box-shadow: 0 .04rem .08rem 0 rgba(0,145,255,0.32);
