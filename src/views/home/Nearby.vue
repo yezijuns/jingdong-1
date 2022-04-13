@@ -4,48 +4,49 @@
     <div
      v-for="item in nearbyList"
      class="nearby__item"
-     :key="item.id"
+     :key="item._id"
     >
       <img class="nearby__item__img" :src="item.imgUrl">
       <div class="nearby__content">
-        <div class="nearby__content__title">{{item.title}}</div>
+        <div class="nearby__content__title">{{item.name}}</div>
         <div class="nearby__content__tags">
-          <span
-           v-for="(innerItem, innerIndex) in item.tags"
-           class="nearby__content__tag"
-           :key="innerIndex"
-          >{{innerItem}}</span>
+          <span class="nearby__content__tag">月售: {{item.sales}}</span>
+          <span class="nearby__content__tag">起送: {{item.expressLimit}}</span>
+          <span class="nearby__content__tag">基础运费: {{item.expressPrice}}</span>
         </div>
-        <div class="nearby__content__highlight">{{item.desc}}</div>
+        <div class="nearby__content__highlight">{{item.slogan}}</div>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { ref } from 'vue'
+import { get } from '../../utils/request'
+
+const useNearbyListEffect = () => {
+  const nearbyList = ref([])
+  const getNearbyList = async () => {
+    const result = await get('/api/shop/hot-list')
+    if (result?.errno === 0 && result?.data?.length) {
+      nearbyList.value = result.data
+    }
+  }
+  return { getNearbyList, nearbyList }
+}
+
 export default {
   name: 'Nearby',
   setup () {
-    const nearbyList = [{
-      id: 1,
-      imgUrl: 'http://www.dell-lee.com/imgs/vue3/near.png',
-      title: '沃尔玛',
-      tags: ['月售1万+', '起送¥0', '基础运费¥10'],
-      desc: 'VIP尊享满89元减4元运费券（每月3张）'
-    }, {
-      id: 2,
-      imgUrl: 'http://www.dell-lee.com/imgs/vue3/near.png',
-      title: '沃尔玛',
-      tags: ['月售1万+', '起送¥0', '基础运费¥5'],
-      desc: 'VIP尊享满89元减4元运费券（每月3张）'
-    }]
+    const { getNearbyList, nearbyList } = useNearbyListEffect()
+    getNearbyList()
     return { nearbyList }
   }
 }
 </script>
 
 <style lang="scss" scoped>
-@import '../../style/virables.scss';
+@import '../../style/viriables.scss';
 .nearby {
   &__title {
     margin: .16rem 0 .04rem 0;

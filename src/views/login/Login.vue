@@ -75,7 +75,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../style/virables.scss';
+@import '../../style/viriables.scss';
 .wrapper {
   position: absolute;
   top: 50%;

@@ -28,7 +28,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../style/virables.scss';
+@import '../../style/viriables.scss';
 .docker {
   display: flex;
   box-sizing: border-box;

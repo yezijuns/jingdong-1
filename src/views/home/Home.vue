@@ -17,7 +17,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '../../style/virables.scss';
+@import '../../style/viriables.scss';
 @import '../../style/mixins.scss';
 .wrapper {
   overflow-y: auto;
