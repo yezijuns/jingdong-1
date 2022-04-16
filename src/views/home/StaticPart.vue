@@ -75,10 +75,10 @@ export default {
 }
 .search {
   height: .32rem;
-  background: #F5F5F5;
+  background: $search-bgColor;
   border-radius: .16rem;
   margin-bottom: .16rem;
-  color: #B7B7B7;
+  color: $search-fontColor;
   .iconfont {
     position: relative;
     font-size: .2rem;
@@ -115,7 +115,7 @@ export default {
     }
     &__desc {
       font-size: 12px;
-      color: #333333;
+      color: $content-fontcolor;
       text-align: center;
       display: block;
     }

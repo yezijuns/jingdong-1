@@ -43,12 +43,13 @@ export default {
 </script>
 
 <style lang="scss" ecoped>
+@import '../../style/viriables.scss';
 .wrapper {
   padding: 0 .18rem;
 }
 .search {
   display: flex;
-  padding: .2rem 0 .16rem 0;
+  padding: .14rem 0 .04rem 0;
   &__back {
     line-height: .32rem;
     width: .3rem;
@@ -58,13 +59,14 @@ export default {
   &__content {
     display: flex;
     flex: 1;
-    background: #F5F5F5;
+    background: $search-bgColor;
     border-radius: .16rem;
     &__icon {
       width: .44rem;
       text-align: center;
       font-size: .2rem;
       margin: .08rem 0.04rem .08rem .1rem;
+      color: $search-fontColor;
     }
     &__input {
       display: block;
@@ -76,9 +78,9 @@ export default {
       outline: none;
       margin-top: .03rem;
       font-size: .14rem;
-      color: #333;
+      color: $content-fontcolor;
       &::placeholder {
-        color: #333;
+        color: $content-fontcolor;
       }
     }
   }
