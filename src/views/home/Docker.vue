@@ -38,7 +38,7 @@ export default {
   bottom: 0;
   width: 100%;
   height: .49rem;
-  background: #fff;
+  background: $bgColor;
   border-top: .01rem solid $content-bgColor;
   color: $content-fontcolor;
   &__item {
