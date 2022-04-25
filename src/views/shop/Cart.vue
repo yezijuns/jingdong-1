@@ -1,8 +1,23 @@
 <template>
+<div class="mask" v-if="showChart"></div>
 <div class="cart">
-  <div class="product">
+  <div class="product" v-if="showChart">
     <div class="product__header">
-
+      <div
+       class="product__header__all"
+       @click="() => setCartItemChecked(shopId)"
+      >
+        <span
+         class="product__header__icon iconfont"
+         v-html="allChecked ? '&#xe6f7;' : '&#xe731;'"
+        >
+        </span>
+        全选
+      </div>
+     <div
+      class="product__header__clear"
+      @click="() => cleanCartProducts(shopId)"
+     >清空购物车</div>
     </div>
     <template
       v-for="item in productList"
@@ -41,6 +56,7 @@
       <img
        src="http://www.dell-lee.com/imgs/vue3/basket.png"
        class="check__icon__img"
+       @click="handleCartShowChange"
       >
       <div class="check__icon__tag">{{total}}</div>
     </div>
@@ -53,7 +69,7 @@
 </template>
 
 <script>
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import { useCommonCartEffect } from './commonCartEffect'
@@ -74,6 +90,7 @@ const useCartEffect = (shopId) => {
     }
     return count
   })
+
   const price = computed(() => {
     const productList = cartList[shopId]
     let count = 0
@@ -88,6 +105,20 @@ const useCartEffect = (shopId) => {
     return count.toFixed(2)
   })
 
+  const allChecked = computed(() => {
+    const productList = cartList[shopId]
+    let result = true
+    if (productList) {
+      for (const i in productList) {
+        const product = productList[i]
+        if (product.count > 0 && !product.check) {
+          result = false
+        }
+      }
+    }
+    return result
+  })
+
   const productList = computed(() => {
     const productList = cartList[shopId] || []
     return productList
@@ -97,7 +128,15 @@ const useCartEffect = (shopId) => {
     store.commit('changeCartItemChecked', { shopId, productId })
   }
 
-  return { total, price, cartList, productList, changeItemInfo, changeCartItemCheck }
+  const cleanCartProducts = (shopId) => {
+    store.commit('cleanCartProducts', { shopId })
+  }
+
+  const setCartItemChecked = (shopId) => {
+    store.commit('setCartItemChecked', { shopId })
+  }
+
+  return { total, price, cartList, productList, allChecked, changeItemInfo, changeCartItemCheck, cleanCartProducts, setCartItemChecked }
 }
 
 export default {
@@ -105,8 +144,13 @@ export default {
   setup () {
     const route = useRoute()
     const shopId = route.params.id
-    const { total, price, productList, changeItemInfo, changeCartItemCheck } = useCartEffect(shopId)
-    return { total, price, shopId, productList, changeItemInfo, changeCartItemCheck }
+    const showChart = ref(false)
+    const handleCartShowChange = () => {
+      showChart.value = !showChart.value
+    }
+
+    const { total, price, productList, allChecked, changeItemInfo, changeCartItemCheck, cleanCartProducts, setCartItemChecked } = useCartEffect(shopId)
+    return { total, price, shopId, productList, allChecked, showChart, changeItemInfo, changeCartItemCheck, cleanCartProducts, setCartItemChecked, handleCartShowChange }
   }
 }
 </script>
@@ -114,11 +158,22 @@ export default {
 <style lang="scss" scoped>
 @import '../../style/viriables';
 @import '../../style/mixins';
+.mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  background: rgba(0, 0, 0, .5);
+  z-index: 1;
+}
 .cart {
   position: absolute;
   left: 0;
   right: 0;
   bottom: 0;
+  z-index: 2;
+  background: #FFF;
 }
 .check {
   display: flex;
@@ -175,8 +230,25 @@ export default {
   flex: 1;
   background: #FFF;
   &__header {
-    height: .52rem;
+    display: flex;
+    line-height: .52rem;
     border-bottom:1px solid #F1F1F1;
+    font-size: .14rem;
+    color: #333;
+    &__all {
+      width: .64rem;
+      margin-left: .18rem;
+    }
+    &__icon {
+      display: inline-block;
+      color: #0091FF;
+      font-size: .2rem;
+    }
+    &__clear {
+      flex: 1;
+      margin-right: .16rem;
+      text-align: right;
+    }
   }
   &__item {
     position: relative;
