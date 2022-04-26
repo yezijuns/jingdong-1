@@ -22,8 +22,7 @@ export default Vuex.createStore({
   mutations: {
     changeItemInfo (state, payload) {
       const { shopId, productId, productInfo } = payload
-      let shopInfo = state.cartList[shopId]
-      if (!shopInfo) { shopInfo = {} }
+      const shopInfo = state.cartList[shopId] || {}
       let product = shopInfo[productId]
       if (!product) {
         product = productInfo
@@ -54,9 +53,5 @@ export default Vuex.createStore({
         }
       }
     }
-  },
-  actions: {
-  },
-  modules: {
   }
 })

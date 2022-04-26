@@ -1,7 +1,11 @@
 <template>
-<div class="mask" v-if="showChart"></div>
+<div
+ class="mask"
+ v-if="showCart"
+ @click="handleCartShowChange"
+></div>
 <div class="cart">
-  <div class="product" v-if="showChart">
+  <div class="product" v-if="showCart">
     <div class="product__header">
       <div
        class="product__header__all"
@@ -14,10 +18,12 @@
         </span>
         全选
       </div>
-     <div
-      class="product__header__clear"
-      @click="() => cleanCartProducts(shopId)"
-     >清空购物车</div>
+     <div class="product__header__clear">
+      <span
+       class="product__header__clear__btn"
+       @click="() => cleanCartProducts(shopId)"
+      >清空购物车</span>
+     </div>
     </div>
     <template
       v-for="item in productList"
@@ -63,7 +69,11 @@
     <div class="check__info">
       总计 : <span class="check__info__price">&yen; {{price}}</span>
     </div>
-    <div class="check__btn">去结算</div>
+    <div class="check__btn">
+      <router-link :to="{name: 'Home'}">
+      去结算
+      </router-link>
+    </div>
   </div>
 </div>
 </template>
@@ -139,18 +149,24 @@ const useCartEffect = (shopId) => {
   return { total, price, cartList, productList, allChecked, changeItemInfo, changeCartItemCheck, cleanCartProducts, setCartItemChecked }
 }
 
+// 展示隐藏购物车逻辑
+const toggleCartEffect = () => {
+  const showCart = ref(false)
+  const handleCartShowChange = () => {
+    showCart.value = !showCart.value
+  }
+  return { showCart, handleCartShowChange }
+}
+
 export default {
   name: 'Cart',
   setup () {
     const route = useRoute()
     const shopId = route.params.id
-    const showChart = ref(false)
-    const handleCartShowChange = () => {
-      showChart.value = !showChart.value
-    }
 
     const { total, price, productList, allChecked, changeItemInfo, changeCartItemCheck, cleanCartProducts, setCartItemChecked } = useCartEffect(shopId)
-    return { total, price, shopId, productList, allChecked, showChart, changeItemInfo, changeCartItemCheck, cleanCartProducts, setCartItemChecked, handleCartShowChange }
+    const { showCart, handleCartShowChange } = toggleCartEffect()
+    return { total, price, shopId, productList, allChecked, showCart, changeItemInfo, changeCartItemCheck, cleanCartProducts, setCartItemChecked, handleCartShowChange }
   }
 }
 </script>
@@ -173,7 +189,7 @@ export default {
   right: 0;
   bottom: 0;
   z-index: 2;
-  background: #FFF;
+  background: $bgColor;
 }
 .check {
   display: flex;
@@ -209,7 +225,7 @@ export default {
   }
   &__info {
     flex: 1;
-    color: #333;
+    color: $content-fontcolor;
     font-size: .12rem;
     &__price {
       color: $heightlight-fontColor;
@@ -222,32 +238,40 @@ export default {
     background: #4FB0F9;
     text-align: center;
     font-size: .14rem;
-    color: $bgColor;
+    a {
+      color: $bgColor;
+      text-decoration: none;
+    }
   }
 }
 .product {
   overflow-y: scroll;
   flex: 1;
-  background: #FFF;
+  background: $bgColor;
   &__header {
     display: flex;
     line-height: .52rem;
-    border-bottom:1px solid #F1F1F1;
+    border-bottom:1px solid $content-bgColor;
     font-size: .14rem;
-    color: #333;
+    color: $content-fontcolor;
     &__all {
       width: .64rem;
       margin-left: .18rem;
     }
     &__icon {
       display: inline-block;
-      color: #0091FF;
+      vertical-align: top;
+      margin-right: .1rem;
+      color: $btn-bgColor;
       font-size: .2rem;
     }
     &__clear {
       flex: 1;
       margin-right: .16rem;
       text-align: right;
+      &__btn {
+        display: inline-block;
+      }
     }
   }
   &__item {
@@ -259,7 +283,7 @@ export default {
     &__checked {
       line-height: .5rem;
       margin-right: .2rem;
-      color: #0091FF;
+      color: $btn-bgColor;
       font-size: .2rem;
     }
     &__img {
@@ -295,7 +319,7 @@ export default {
     }
     .product__number {
       position: absolute;
-      bottom: .12rem;
+      bottom: .26rem;
       right: 0;
       &__minus, &__plus {
         display: inline-block;
