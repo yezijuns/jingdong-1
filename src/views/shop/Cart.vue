@@ -46,12 +46,12 @@
         <div class="product__number">
           <span
            class="product__number__minus"
-           @click="() => { changeItemInfo(shopId, item._id, item, -1) }"
+           @click="() => { changeCartItemInfo(shopId, item._id, item, -1) }"
           >-</span>
             {{item.count || 0}}
           <span
             class="product__number__plus"
-            @click="() => { changeItemInfo(shopId, item._id, item, 1) }"
+            @click="() => { changeCartItemInfo(shopId, item._id, item, 1) }"
           >+</span>
         </div>
       </div>
@@ -86,11 +86,11 @@ import { useCommonCartEffect } from './commonCartEffect'
 
 // 获取购物车信息逻辑
 const useCartEffect = (shopId) => {
-  const { changeItemInfo } = useCommonCartEffect()
+  const { changeCartItemInfo } = useCommonCartEffect()
   const store = useStore()
   const cartList = store.state.cartList
   const total = computed(() => {
-    const productList = cartList[shopId]
+    const productList = cartList[shopId]?.productList
     let count = 0
     if (productList) {
       for (const i in productList) {
@@ -102,7 +102,7 @@ const useCartEffect = (shopId) => {
   })
 
   const price = computed(() => {
-    const productList = cartList[shopId]
+    const productList = cartList[shopId]?.productList
     let count = 0
     if (productList) {
       for (const i in productList) {
@@ -116,7 +116,7 @@ const useCartEffect = (shopId) => {
   })
 
   const allChecked = computed(() => {
-    const productList = cartList[shopId]
+    const productList = cartList[shopId]?.productList
     let result = true
     if (productList) {
       for (const i in productList) {
@@ -130,7 +130,7 @@ const useCartEffect = (shopId) => {
   })
 
   const productList = computed(() => {
-    const productList = cartList[shopId] || []
+    const productList = cartList[shopId]?.productList || []
     return productList
   })
 
@@ -146,7 +146,7 @@ const useCartEffect = (shopId) => {
     store.commit('setCartItemChecked', { shopId })
   }
 
-  return { total, price, cartList, productList, allChecked, changeItemInfo, changeCartItemCheck, cleanCartProducts, setCartItemChecked }
+  return { total, price, cartList, productList, allChecked, changeCartItemInfo, changeCartItemCheck, cleanCartProducts, setCartItemChecked }
 }
 
 // 展示隐藏购物车逻辑
@@ -164,9 +164,9 @@ export default {
     const route = useRoute()
     const shopId = route.params.id
 
-    const { total, price, productList, allChecked, changeItemInfo, changeCartItemCheck, cleanCartProducts, setCartItemChecked } = useCartEffect(shopId)
+    const { total, price, productList, allChecked, changeCartItemInfo, changeCartItemCheck, cleanCartProducts, setCartItemChecked } = useCartEffect(shopId)
     const { showCart, handleCartShowChange } = toggleCartEffect()
-    return { total, price, shopId, productList, allChecked, showCart, changeItemInfo, changeCartItemCheck, cleanCartProducts, setCartItemChecked, handleCartShowChange }
+    return { total, price, shopId, productList, allChecked, showCart, changeCartItemInfo, changeCartItemCheck, cleanCartProducts, setCartItemChecked, handleCartShowChange }
   }
 }
 </script>

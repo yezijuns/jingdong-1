@@ -3,10 +3,10 @@ import { useStore } from 'vuex'
 export const useCommonCartEffect = () => {
   const store = useStore()
   const cartList = store.state.cartList
-  const changeItemInfo = (shopId, productId, productInfo, num) => {
-    store.commit('changeItemInfo', {
+  const changeCartItemInfo = (shopId, productId, productInfo, num) => {
+    store.commit('changeCartItemInfo', {
       shopId, productId, productInfo, num
     })
   }
-  return { cartList, changeItemInfo }
+  return { cartList, changeCartItemInfo }
 }
