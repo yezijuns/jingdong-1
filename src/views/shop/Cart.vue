@@ -1,11 +1,11 @@
 <template>
 <div
  class="mask"
- v-if="showCart"
+ v-if="showCart && calculations.total > 0"
  @click="handleCartShowChange"
 ></div>
 <div class="cart">
-  <div class="product" v-if="showCart">
+  <div class="product" v-if="showCart && calculations.total > 0">
     <div class="product__header">
       <div
        class="product__header__all"
@@ -13,7 +13,7 @@
       >
         <span
          class="product__header__icon iconfont"
-         v-html="allChecked ? '&#xe6f7;' : '&#xe731;'"
+         v-html="calculations.allChecked ? '&#xe6f7;' : '&#xe731;'"
         >
         </span>
         全选
@@ -64,10 +64,10 @@
        class="check__icon__img"
        @click="handleCartShowChange"
       >
-      <div class="check__icon__tag">{{total}}</div>
+      <div class="check__icon__tag">{{calculations.total}}</div>
     </div>
     <div class="check__info">
-      总计 : <span class="check__info__price">&yen; {{price}}</span>
+      总计 : <span class="check__info__price">&yen; {{calculations.price}}</span>
     </div>
     <div class="check__btn">
       <router-link :to="{name: 'Home'}">
@@ -86,46 +86,25 @@ import { useCommonCartEffect } from './commonCartEffect'
 
 // 获取购物车信息逻辑
 const useCartEffect = (shopId) => {
-  const { changeCartItemInfo } = useCommonCartEffect()
   const store = useStore()
-  const cartList = store.state.cartList
-  const total = computed(() => {
-    const productList = cartList[shopId]?.productList
-    let count = 0
-    if (productList) {
-      for (const i in productList) {
-        const product = productList[i]
-        count += product.count
-      }
-    }
-    return count
-  })
+  const { cartList, changeCartItemInfo } = useCommonCartEffect()
 
-  const price = computed(() => {
+  const calculations = computed(() => {
     const productList = cartList[shopId]?.productList
-    let count = 0
+    const result = { total: 0, price: 0, allChecked: true }
     if (productList) {
       for (const i in productList) {
         const product = productList[i]
+        result.total += product.count
         if (product.check) {
-          count += (product.count * product.price)
+          result.price += (product.count * product.price)
         }
-      }
-    }
-    return count.toFixed(2)
-  })
-
-  const allChecked = computed(() => {
-    const productList = cartList[shopId]?.productList
-    let result = true
-    if (productList) {
-      for (const i in productList) {
-        const product = productList[i]
         if (product.count > 0 && !product.check) {
-          result = false
+          result.allChecked = false
         }
       }
     }
+    result.price = result.price.toFixed(2)
     return result
   })
 
@@ -146,7 +125,7 @@ const useCartEffect = (shopId) => {
     store.commit('setCartItemChecked', { shopId })
   }
 
-  return { total, price, cartList, productList, allChecked, changeCartItemInfo, changeCartItemCheck, cleanCartProducts, setCartItemChecked }
+  return { calculations, cartList, productList, changeCartItemInfo, changeCartItemCheck, cleanCartProducts, setCartItemChecked }
 }
 
 // 展示隐藏购物车逻辑
@@ -164,9 +143,9 @@ export default {
     const route = useRoute()
     const shopId = route.params.id
 
-    const { total, price, productList, allChecked, changeCartItemInfo, changeCartItemCheck, cleanCartProducts, setCartItemChecked } = useCartEffect(shopId)
+    const { calculations, productList, changeCartItemInfo, changeCartItemCheck, cleanCartProducts, setCartItemChecked } = useCartEffect(shopId)
     const { showCart, handleCartShowChange } = toggleCartEffect()
-    return { total, price, shopId, productList, allChecked, showCart, changeCartItemInfo, changeCartItemCheck, cleanCartProducts, setCartItemChecked, handleCartShowChange }
+    return { calculations, shopId, productList, showCart, changeCartItemInfo, changeCartItemCheck, cleanCartProducts, setCartItemChecked, handleCartShowChange }
   }
 }
 </script>
