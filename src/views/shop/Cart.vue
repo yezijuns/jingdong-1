@@ -70,7 +70,7 @@
       总计 : <span class="check__info__price">&yen; {{calculations.price}}</span>
     </div>
     <div class="check__btn">
-      <router-link :to="{name: 'Home'}">
+      <router-link :to="{path: `/OrderConfirmation/${shopId}`}">
       去结算
       </router-link>
     </div>
