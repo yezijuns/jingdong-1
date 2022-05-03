@@ -10,33 +10,56 @@
     <div class="mask__content__btns">
       <div
        class="mask__content__btn mask__content__btn--first"
-       @click="handleCancelOrder"
+       @click="() => handleConfirmOrder(true)"
       >取消订单</div>
       <div
        class="mask__content__btn mask__content__btn--last"
-       @click="handleConfirmOrder"
-      >取消订单</div>
+       @click="() => handleConfirmOrder(false)"
+      >确认支付</div>
     </div>
   </div>
 </div>
 </template>
 
 <script>
-import { useRoute } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
+import { useStore } from 'vuex'
+import { post } from '../../utils/request'
 import { useCommonCartEffect } from '../../effects/cartEffects'
 export default {
   name: 'Order',
   setup () {
+    const router = useRouter()
     const route = useRoute()
-    const shopId = route.params.id
-    const { calculations } = useCommonCartEffect(shopId)
-    const handleCancelOrder = () => {
-      alert('cancel')
+    const store = useStore()
+    const shopId = parseInt(route.params.id, 10)
+    const { calculations, shopName, productList } = useCommonCartEffect(shopId)
+    const handleConfirmOrder = async (isCanceled) => {
+      const products = []
+      for (const i in productList.value) {
+        const product = productList.value[i]
+        products.push({ id: parseInt(product._id, 10), num: product.count })
+      }
+      console.log(products)
+      try {
+        const result = await post('/api/order', {
+          addressId: 1,
+          shopId,
+          shopName: shopName.value,
+          isCanceled,
+          products: {
+          }
+        })
+        console.log(result)
+        if (result?.errno === 0) {
+          store.commit('clearCartData', shopId)
+          router.push({ name: 'Home' })
+        }
+      } catch (e) {
+        // 提示下单失败
+      }
     }
-    const handleConfirmOrder = () => {
-      alert('cancel')
-    }
-    return { calculations, handleCancelOrder, handleConfirmOrder }
+    return { calculations, handleConfirmOrder }
   }
 }
 </script>
