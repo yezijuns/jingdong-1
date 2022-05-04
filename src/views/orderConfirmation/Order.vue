@@ -1,65 +1,85 @@
 <template>
-<div class="order">
-  <div class="order__price">实付金额 <b>¥{{calculations.price}}</b></div>
-  <div class="order__btn">提交订单</div>
-</div>
-<div class="mask">
-  <div class="mask__content">
-    <h3 class="mask__content__title">确认离开收银台？</h3>
-    <p class="mask__content__desc">请尽快完成支付，否则将会被取消</p>
-    <div class="mask__content__btns">
-      <div
-       class="mask__content__btn mask__content__btn--first"
-       @click="() => handleConfirmOrder(true)"
-      >取消订单</div>
-      <div
-       class="mask__content__btn mask__content__btn--last"
-       @click="() => handleConfirmOrder(false)"
-      >确认支付</div>
+  <div class="order">
+    <div class="order__price">实付金额 <b>¥{{calculations.price}}</b></div>
+    <div class="order__btn" @click="() => handleShowConfirmChange(true)">提交订单</div>
+  </div>
+  <div
+    class="mask"
+    v-show="showConfirm"
+    @click="() => handleShowConfirmChange(false)"
+  >
+    <div class="mask__content" @click.stop>
+      <h3 class="mask__content__title">确认要离开收银台？</h3>
+      <p class="mask__content__desc">请尽快完成支付，否则将被取消</p>
+      <div class="mask__content__btns">
+        <div
+          class="mask__content__btn mask__content__btn--first"
+          @click="() => handleConfirmOrder(true)"
+        >取消订单</div>
+        <div
+          class="mask__content__btn mask__content__btn--last"
+          @click="() => handleConfirmOrder(false)"
+        >确认支付</div>
+      </div>
     </div>
   </div>
-</div>
 </template>
 
 <script>
+import { ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useStore } from 'vuex'
 import { post } from '../../utils/request'
 import { useCommonCartEffect } from '../../effects/cartEffects'
+
+// 下单相关逻辑
+const useMakeOrderEffect = (shopId, shopName, productList) => {
+  const router = useRouter()
+  const store = useStore()
+
+  const handleConfirmOrder = async (isCanceled) => {
+    const products = []
+    for (const i in productList.value) {
+      const product = productList.value[i]
+      products.push({ id: parseInt(product._id, 10), num: product.count })
+    }
+    try {
+      const result = await post('/api/order', {
+        addressId: 1,
+        shopId,
+        shopName: shopName.value,
+        isCanceled,
+        products
+      })
+      if (result?.errno === 0) {
+        store.commit('clearCartData', shopId)
+        router.push({ name: 'OrderList' })
+      }
+    } catch (e) {
+      // 提示下单失败
+    }
+  }
+  return { handleConfirmOrder }
+}
+
+// 蒙层展示相关的逻辑
+const useShowMaskEffect = () => {
+  const showConfirm = ref(false)
+  const handleShowConfirmChange = (status) => {
+    showConfirm.value = status
+  }
+  return { showConfirm, handleShowConfirmChange }
+}
+
 export default {
   name: 'Order',
   setup () {
-    const router = useRouter()
     const route = useRoute()
-    const store = useStore()
     const shopId = parseInt(route.params.id, 10)
     const { calculations, shopName, productList } = useCommonCartEffect(shopId)
-    const handleConfirmOrder = async (isCanceled) => {
-      const products = []
-      for (const i in productList.value) {
-        const product = productList.value[i]
-        products.push({ id: parseInt(product._id, 10), num: product.count })
-      }
-      console.log(products)
-      try {
-        const result = await post('/api/order', {
-          addressId: 1,
-          shopId,
-          shopName: shopName.value,
-          isCanceled,
-          products: {
-          }
-        })
-        console.log(result)
-        if (result?.errno === 0) {
-          store.commit('clearCartData', shopId)
-          router.push({ name: 'Home' })
-        }
-      } catch (e) {
-        // 提示下单失败
-      }
-    }
-    return { calculations, handleConfirmOrder }
+    const { handleConfirmOrder } = useMakeOrderEffect(shopId, shopName, productList)
+    const { showConfirm, handleShowConfirmChange } = useShowMaskEffect()
+    return { showConfirm, handleShowConfirmChange, calculations, handleConfirmOrder }
   }
 }
 </script>
@@ -84,12 +104,11 @@ export default {
   &__btn {
     width: .98rem;
     background: #4FB0F9;
-    color: $bgColor;
+    color: #fff;
     text-align: center;
     font-size: .14rem;
   }
 }
-
 .mask {
   z-index: 1;
   position: absolute;
@@ -107,17 +126,17 @@ export default {
     height: 1.56rem;
     background: #FFF;
     text-align: center;
-    border-radius: 0.04rem;
+    border-radius: .04rem;
     &__title {
-    margin: .24rem 0 0 0;
-    line-height: .26rem;
-    font-size: .18rem;
-    color: #333;
+      margin: .24rem 0 0 0;
+      line-height: .26rem;
+      font-size: .18rem;
+      color: #333;
     }
     &__desc {
       margin: .08rem 0 0 0;
       font-size: .14rem;
-      color: #666;
+      color: #666666;
     }
     &__btns {
       display: flex;
@@ -127,8 +146,8 @@ export default {
       flex: 1;
       width: .8rem;
       line-height: .32rem;
-      border: .01rem solid #4FB0F9;
       border-radius: .16rem;
+      font-size: .14rem;
       &--first {
         margin-right: .12rem;
         border: .01rem solid #4FB0F9;
@@ -137,7 +156,7 @@ export default {
       &--last {
         margin-left: .12rem;
         background: #4FB0F9;
-        color: #FFF;
+        color: #fff;
       }
     }
   }
