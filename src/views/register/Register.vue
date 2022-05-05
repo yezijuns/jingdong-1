@@ -104,7 +104,7 @@ export default {
     margin: 0 .4rem .16rem .4rem;
     background: #F9F9F9;
     padding: 0 .16rem;
-    border: 1px solid rgba(0,0,0,0.10);
+    border: .01rem solid rgba(0,0,0,0.10);
     border-radius: .06rem;
     border-radius: .06rem;
     &__content {
@@ -132,7 +132,7 @@ export default {
     text-align: center;
   }
   &__login-link {
-    font-size: 14px;
+    font-size: .14rem;
     color: $content-notice-fontcolor;
     text-align: center;
   }

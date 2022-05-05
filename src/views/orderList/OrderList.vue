@@ -98,9 +98,6 @@ export default {
   color: $content-fontcolor;
   text-align: center;
 }
-.orders {
-
-}
 .order {
   margin: .16rem .18rem;
   padding: .16rem;

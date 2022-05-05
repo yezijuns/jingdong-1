@@ -114,7 +114,7 @@ export default {
       margin: 0 auto;
     }
     &__desc {
-      font-size: 12px;
+      font-size: .12rem;
       color: $content-fontcolor;
       text-align: center;
       display: block;

@@ -43,7 +43,7 @@ export default {
 .nearby {
   &__title {
     margin: .16rem 0 .04rem 0;
-    font-size: 18px;
+    font-size: .18rem;
     font-weight: normal;
     color: $content-fontcolor;
   }

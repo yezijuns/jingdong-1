@@ -40,13 +40,13 @@ export default {
     }
     &__title {
       line-height: .22rem;
-      font-size: 16px;
+      font-size: .16rem;
       color: $content-fontcolor;
     }
     &__tags {
       margin-top: .08rem;
       line-height: .18rem;
-      font-size: 13px;
+      font-size: .13rem;
       color: $content-fontcolor;
     }
     &__tag {
@@ -55,7 +55,7 @@ export default {
     &__highlight {
       margin: .08rem 0 0 0;
       line-height: .18rem;
-      font-size: 13px;
+      font-size: .13rem;
       color: #E93B3B;
     }
   }
